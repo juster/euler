@@ -1,12 +1,5 @@
-∇EULER04;C;P;I;N;F;G
-  C←(⍳9)∘.,((⍳10)-1)∘.,((⍳10)-1) ⍝ Permutations of (1-9)(0-9)(0-9)
-  P←⌽10⊥¨,,/[2](,C),[1.5](,⌽¨C) ⍝ Concat with reversed and decode into integers
-  I←1
-  →(I>⍴P)/0
-  F←(0=N|P[I])/N←⍳⌊P[I]*0.5
-  G←P[I]÷F
-  →(1∊(3∊⌊1+(⍟F)÷⍟10)∧(3∊⌊1+(⍟G)÷⍟10))/10
-  I←I+1
-  →4
-  ⎕←P[I]
-
+∇EULER04;P;A;B
+  P←(⍳9)∘.,((⍳10)-1)∘.,((⍳10)-1) ⍝ Permutations of (1-9)(0-9)(0-9)
+  A←⌽10⊥¨,,/[2](,P),[1.5](,⌽¨P) ⍝ Concat with reversed and decode into integers
+  B←,B∘.×B←100+(⍳900)-1 ⍝ All products of 3-digit numbers
+  ⎕←↑A∩B ⍝ First element of intersection is largest since A is reversed.

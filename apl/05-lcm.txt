@@ -1,0 +1,8 @@
+∇EULER05 N;M;F;I;C
+  M←N N⍴1,N⍴0 ◊ F←PRIMEFACS¨1↓⍳N ◊ I←1 ◊ C←N⍴0
+  →(I≥N)/6
+  ⎕←(I+1),F[I] ◊ C←C⌈+/[1]M[⊃F[I];⍳N]
+  I←I+1
+  →2
+  ⎕←×/(⍳N)*C
+  ∇

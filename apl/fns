@@ -1,0 +1,21 @@
+∇P←SIEVE N;M;I;J ⍝ simple sieve of eratosthenes
+  P←0,(N-1)⍴1 ◊ I←1 ◊ M←⌊N*0.5
+  I←I+1
+  →(I>M)/0
+  →((J←(⌊N÷I)-1)<1)/2
+  P[I×1+⍳J]←0
+  →2
+  ∇
+
+∇F←PRIMEFACS N;P;I
+  F←⍬ ◊ I←0
+  P←(SIEVE N)/⍳N ⍝ Only runs the sieve once.
+  I←I+1
+  →(I>⍴P)/0 ⍝ Exit
+  →(0=P[I]|N)/7 ⍝ Found another prime factor.
+  →3
+  N←N÷P[I]
+  F←F,P[I]
+  I←0
+  →3
+  ∇

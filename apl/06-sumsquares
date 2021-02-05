@@ -1,2 +1,5 @@
 ∇D←EULER06
   D←((+/⍳100)*2)-+/(⍳100)*2
+
+D←EULER06B N ⍝ makes use of summation identities
+  D←(((N×N+1)÷2)*2)-(N×(N+1)×1+2×N)÷6 M

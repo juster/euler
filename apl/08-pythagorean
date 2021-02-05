@@ -1,0 +1,11 @@
+EULER09;N;A;B;C;T
+N←500
+A←N N⍴⍳N
+B←⍉A
+C←((A*2)+(B*2))*0.5
+T←1000=A+B+C
+A←(+/[2]T)/⍳N
+A←A,(1000-+/A)
+⎕←'Coeffs :',A
+⎕←'Product:',×/A
+

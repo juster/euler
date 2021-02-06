@@ -1,0 +1,22 @@
+EULER14 N;X;I;J;C;R
+I←0
+R←0 0
+LOOP:
+I←I+1
+→(I≥N)/EXIT
+J←I ⋄ C←0
+COLLATZ:
+C←C+1 ⍝ increase term count
+⍝⎕←J C
+→(J=1)/DONE
+→(0=2|J)/EVEN
+J←1+3×J
+→COLLATZ
+EVEN: J←J÷2
+→COLLATZ
+DONE:
+→(C≤R[2])/LOOP
+R←I C ⍝ overwrite result if terms gtr than result
+→LOOP
+EXIT:
+R

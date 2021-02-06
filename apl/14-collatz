@@ -1,22 +1,34 @@
-EULER14 N;X;I;J;C;R
+EULER14 N;X;Y;I;J;C;R
 I←0
-R←0 0
-LOOP:
+C←N⍴0
+C[1]←1
+C[2*⍳⌊(⍟N)÷⍟2]←1+⍳⌊(⍟N)÷⍟2
+
+LOOP: ⍝ Outer loop
 I←I+1
 →(I≥N)/EXIT
-J←I ⋄ C←0
-COLLATZ:
-C←C+1 ⍝ increase term count
-⍝⎕←J C
-→(J=1)/DONE
+⍝⎕←I
+→(C[I]≠0)/LOOP ⍝ Short-circuit: I is a known length.
+
+J←I ⋄ R←⍬
+COLLATZ: ⍝ Inner loop
+⍝⎕←J
+→(J≥N)/MAX ⍝ Avoid trying to access past the vector.
+→(C[J]≠0)/DONE ⍝ We have overlapped a known count.
+MAX:
+R←(J⌊N),R ⍝ Remember this term for later.
 →(0=2|J)/EVEN
-J←1+3×J
+J←1+3×J ⍝ n→3n+1 (n is odd)
 →COLLATZ
-EVEN: J←J÷2
+EVEN: J←J÷2 ⍝ n→n/2 (n is even)
 →COLLATZ
 DONE:
-→(C≤R[2])/LOOP
-R←I C ⍝ overwrite result if terms gtr than result
+
+⍝ C[J] is a known count.
+C[R]←C[J]+⍳⍴R ⍝ Update all previously touched n-s
+Y←⌊(⍟N÷I)÷⍟2 ⍝ Y is count of terms to be updated.
+C[I×2*⍳Y]←C[I]+⍳Y ⍝ Update all _powers_ of 2.
 →LOOP
+
 EXIT:
-R
+↑⍒C

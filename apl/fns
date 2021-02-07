@@ -1,11 +1,11 @@
-∇P←SIEVE N;M;I;J ⍝ simple sieve of eratosthenes
-  P←0,(N-1)⍴1 ◊ I←1 ◊ M←⌊N*0.5
-  I←I+1
-  →(I>M)/0
-  →((J←(⌊N÷I)-1)<1)/2
-  P[I×1+⍳J]←0
-  →2
-  ∇
+P„SIEVE N;M;I © A simple sieve of eratosthenes.
+P„0,(N-1)½1 ª I„1 ª M„˜N*0.5
+P[2×¼˜N÷2]„0 © Eliminate all even numbers except 2.
+P[2]„1
+LOOP:I„I+2 © Iterate over odd numbers.
+…(I>M)/0
+P[I×1+¼(˜N÷I)-1]„0 © Eliminate all products of I as prime.
+…LOOP
 
 ∇F←PRIMEFACS N;P;I
   F←⍬ ◊ I←0

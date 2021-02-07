@@ -1,0 +1,12 @@
+EULER12;I;J;A;B;C;X ⍝ ∊i = (n×(n+1))÷2
+I←1 ⋄ J←2 ⋄ A←1 ⋄ B←1 2 ⍝ n, n+1 and their factors.
+LOOP:
+I←J ⋄ J←I+1 ⋄ A←B ⍝ Advance n, n+1, and factors.
+B←(0=(⍳⌊J*0.5)|J)/⍳⌊J*0.5 ⋄ B←B,J÷B ⍝ Find factors of n+1.
+⍝⎕←I,A ⋄ ⎕←J,B
+X←(I×J)÷2
+⍝ The factors of (n×(n+1))÷2 can be built from factors of n and n+1!
+C←∪(1 X),((0=1|C)^(C<X))/C←,(A∘.×B)÷2
+⍝⎕←X,C ⋄ ⎕←⎕N
+→(500≥⍴C)/LOOP
+⎕←X

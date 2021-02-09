@@ -1,0 +1,8 @@
+∇X←EULER16 N;I
+  I←0 ◊ V←,1 ⍝ Start with 2^0
+LOOP:
+  →((I←I+1)>N)/END
+  V←(0,10|V)+(⌊(V←2×V)÷10),0
+  →LOOP
+END:
+  X←+/V

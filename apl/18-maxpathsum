@@ -1,5 +1,5 @@
 EULER18
-V←⍬
+V←⍬ ⍝ Concat all rows into a flat vector.
 V←V,75
 V←V,95 64
 V←V,17 47 82
@@ -16,13 +16,13 @@ V←V,91 71 52 38 17 14 91 43 58 50 27 29 48
 V←V,63 66 04 68 89 53 67 30 73 16 69 87 40 31
 V←V,04 62 98 27 23 09 70 98 73 93 38 53 60 04 23
 V←⌽V ⍝ Reverse the vector so we can pop off the front.
-I←⌊(2×⍴V)*0.5
-X←I↑V
-V←I↓V
+I←⌊(2×⍴V)*0.5 ⍝ Calculate the width of the triangle.
+X←I↑V ⍝ Start with the last row.
+V←I↓V ⍝ Pops the last row off the vector.
 LOOP:
 ⎕←'I',I←I-1
 →(I≤0)/END
-⎕←'X',X←(I↑V)+2⌈/X
+⎕←'X',X←(I↑V)+2⌈/X ⍝ Add last row to max of each 2 in working row.
 V←I↓V
 →LOOP
 END:

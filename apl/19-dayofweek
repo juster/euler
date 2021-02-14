@@ -1,0 +1,17 @@
+DOW EULER19 Vy;Ya;Yb;D;Da;Dl;Dm;Ny;Y;Yp;Yq;Yl
+Dm←31 28 31 30 31 30 31 31 30 31 30 31
+Ya←Vy[1]
+Yb←Vy[2]
+Ny←1+Yb-Ya
+Y←¯1+Ya+⍳Ny ⍝ All years between provided range (inclusive).
+⍝ Let Y be a leap year...
+⍝  1) Y is divisible by both 4 and 100.
+⍝  2) or Y is divisible by 4 but not divisible by 100.
+Yl←(Yp^Yq)∨(Yp^~Yq) ⊣ Yp←0=4|Y ⊣ Yq←0=100|Y
+Dl←Yl\[1](+/Yl) 12⍴(0 1),10⍴0
+⍝ D=Days elapsed since Ya, one month at a time.
+D←+\,(Ny 12⍴Dm)+Dl
+D←0,¯1↓D ⍝ starts at zero
+⍝ Days of the week: 0-Mon 1-Tue 2-Wed 3-Thu 4-Fri 5-Sat 6-Sun
+Da←7|365×Ya-1900 ⍝ First day of the year in Ya (Mon is first in 1900).
+⎕←+/DOW=7|Da+D ⍝ Offset day count by first day.

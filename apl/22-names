@@ -4,9 +4,9 @@
   C←⍬
 LOOP:
   I←B⍳','
-  C←C,⊂B[1+⍳(I-3)]
+  C←C,⊂B[1+⍳(I-3)]              ⍝ extract word, trimming dbl quotes
   B←I↓B
   →(0<⍴B)/LOOP
-  C←C[⍋⊃C]
-  +/(⍳⍴C) × +/(X<27)×X←A⍳⊃C
+  C←C[⍋⊃C]                      ⍝ sort names
+  +/(⍳⍴C) × +/(X<27)×X←A⍳⊃C     ⍝ calculate scores then sum up
 ∇

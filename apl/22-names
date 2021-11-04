@@ -1,0 +1,12 @@
+∇EULER22;A;B;C;I;X
+  A←'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  B←⎕FIO[26] 'p022_names.txt'
+  C←⍬
+LOOP:
+  I←B⍳','
+  C←C,⊂B[1+⍳(I-3)]
+  B←I↓B
+  →(0<⍴B)/LOOP
+  C←C[⍋⊃C]
+  +/(⍳⍴C) × +/(X<27)×X←A⍳⊃C
+∇

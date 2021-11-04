@@ -1,4 +1,4 @@
-DOW EULER19 Vy;Ya;Yb;D;Da;Dl;Dm;Ny;Y;Yp;Yq;Yl
+∇DOW EULER19 Vy;Ya;Yb;D;Da;Dl;Dm;Ny;Y;Yp;Yq;Yl
 Dm←31 28 31 30 31 30 31 31 30 31 30 31
 Ya←Vy[1]
 Yb←Vy[2]
@@ -15,3 +15,4 @@ D←0,¯1↓D ⍝ starts at zero
 ⍝ Days of the week: 0-Mon 1-Tue 2-Wed 3-Thu 4-Fri 5-Sat 6-Sun
 Da←7|365×Ya-1900 ⍝ First day of the year in Ya (Mon is first in 1900).
 ⎕←+/DOW=7|Da+D ⍝ Offset day count by first day.
+∇

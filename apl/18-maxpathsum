@@ -1,4 +1,4 @@
-EULER18
+∇EULER18
 V←⍬ ⍝ Concat all rows into a flat vector.
 V←V,75
 V←V,95 64
@@ -26,3 +26,4 @@ LOOP:
 V←I↓V
 →LOOP
 END:
+∇

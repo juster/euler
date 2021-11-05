@@ -1,0 +1,11 @@
+⍝ -*- mode: gnu-apl -*-
+⍝ If all the numbers from 1 to 1000 (one thousand) inclusive were written out in
+⍝ words, how many letters would be used?
+∇EULER17;A;B;C;D;E
+  A←⍴¨'one' 'two' 'three' 'four' 'five' 'six' 'seven' 'eight' 'nine'
+  B←⍴¨'ten' 'eleven' 'twelve' 'thirteen' 'fourteen' 'fifteen' 'sixteen' 'seventeen' 'eighteen' 'nineteen'
+  C←⍴¨'twenty' 'thirty' 'forty' 'fifty' 'sixty' 'seventy' 'eighty' 'ninety'
+  D←,C∘.+A                      ⍝ 10X+Y where 1<X<10, 0<Y<10
+  E←(A+⍴'hundred'),,(A+⍴'hundredand')∘.+A,B,C,D ⍝ 100X+10Y+Z where 0<X<10, 0≤Y<10, 0≤Z<10
+  +/A,B,C,D,E,⍴'onethousand'
+∇

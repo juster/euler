@@ -1,0 +1,25 @@
+⍝ -*- mode: gnu-apl -*-
+∇EULER26 D;E;R;I;J;N;M;S
+  ⍝ Compute a table of remainders for all denominators n: n|10×i where 2≤n<D, i∊1..D
+  ⍝ Further refine n where 2|n≠0 and 5|n≠0. (These denominators divide 10 evenly
+  ⍝ and will not create cycles.) Half the table isn't used but oh well.
+  E←((0≠2|E)^(0≠5|E))/E←⍳D-1
+  R←E∘.|10×⍳D-1 ◊ N←M←0 ◊ I←(⍴R)[1]
+LOOP1:
+  I←I-1
+  →(E[I]≤M+1)/END                 ⍝ Optimize! The maximum cycle length of denom d is d-1.
+  S←⍬ ◊ J←1
+LOOP2:
+  S←S,J ◊ J←R[I;J]
+  ⍝ Interestingly, every denominator has a cycle so we don't have to check for zero.
+  ⍝→(J=0)/LOOP1             ⍝ If entry is zero, then there is no cycle
+  →(J∊S)/CHECK             ⍝ We found a cycle, check its length
+  →LOOP2
+CHECK:
+  →(M>1+(⍴S)-S⍳J)/LOOP1      ⍝ If cycle len is new max, update state and continue.
+  N←I ◊ M←1+(⍴S)-S⍳J
+  ⎕←'N:',E[N],' M:',M
+  →LOOP1
+END:
+  E[N]
+∇

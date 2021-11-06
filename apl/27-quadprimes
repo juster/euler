@@ -1,0 +1,33 @@
+⍝ -*- mode: gnu-apl -*-
+
+∇S←SIEVE N;M;I;J;X
+  ⍝ Sieve is an array for each odd no. starting at 3:
+  ⍝ 3 5 7 9 11 13 15 17 19 ...
+  ⍝ 1 1 1 0 1  1  0  1  1  ...
+  S←(¯1+(2|N)+⌊N÷2)⍴1
+  M←⌊(⍴S)*0.5
+  I←0
+LOOP:
+  I←I+1
+  →(I>M)/END
+  →(S[I]=0)/LOOP
+  ⍝ Mark every odd multiple of N (at index I) as not being prime.
+  X←1+2×I
+  S[I+X×⍳J] ← (J←⌊((⍴S)-I)÷X)⍴0
+  →LOOP
+END:
+  ⍝ Expand sieve to include 1 and even numbers.
+  S←1,(((0=2|N)+2×⍴S)⍴0 1)\S
+∇
+
+∇C←EULER27
+  ⍝ Check all primes ≤1000 as candidates for A and B.
+  S←SIEVE 100000
+  P←S/⍳100000
+  A←-(P<1000)/P ◊ B←(P<1000)/P ◊ N←⍳80
+  X←⍴N ◊ Y←⍴A ◊ Z←⍴B
+  M←((Y,X)⍴N*2)+A∘.×N
+  M←(⍉(X,Y,Z)⍴B)+(Z,Y,X)⍴M
+  I←C⍳⌈/C←,+/^\S[|M]
+  C←A[Y|I] B[⌊1+I÷Z]
+∇

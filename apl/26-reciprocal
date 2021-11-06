@@ -3,7 +3,7 @@
   ⍝ Compute a table of remainders for all denominators n: n|10×i where 2≤n<D, i∊1..D
   ⍝ Further refine n where 2|n≠0 and 5|n≠0. (These denominators divide 10 evenly
   ⍝ and will not create cycles.) Half the table isn't used but oh well.
-  E←((0≠2|E)^(0≠5|E))/E←⍳D-1
+  E←1↓((0≠2|E)^(0≠5|E))/E←⍳D-1
   R←E∘.|10×⍳D-1 ◊ N←M←0 ◊ I←(⍴R)[1]
 LOOP1:
   I←I-1

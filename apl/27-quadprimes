@@ -26,8 +26,9 @@ END:
   P←S/⍳100000
   A←-(P<1000)/P ◊ B←(P<1000)/P ◊ N←⍳80
   X←⍴N ◊ Y←⍴A ◊ Z←⍴B
-  M←((Y,X)⍴N*2)+A∘.×N
-  M←(⍉(X,Y,Z)⍴B)+(Z,Y,X)⍴M
-  I←C⍳⌈/C←,+/^\S[|M]
-  C←A[Y|I] B[⌊1+I÷Z]
+  M←B∘.+((Y,X)⍴N*2)+A∘.×N       ⍝ Builds a matrix of N by A by B dimensions
+  ⍝ Use outer product instead of reshape/transpose.
+  ⍝M←(⍉(X,Y,Z)⍴B)+(Z,Y,X)⍴M ⍝ (I learned that dimensions are backwards i.e. M[Z;Y;X])
+  I←C⍳⌈/C←,+/^\S[|M]            ⍝ Count the number of primes in the beginning (N=1,2,...)
+  C←A[Y|I] B[⌊1+I÷Z]            ⍝ Find the index of the max count and determine coeffs from it
 ∇

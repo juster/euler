@@ -1,0 +1,19 @@
+⍝ -*- mode: gnu-apl -*-
+∇EULER29 MAX
+  ⍝ Use a matrix of logarithms to determine which base is a power of another
+  ⍝ base where 1 ≤ base ≤ sqrt(MAX).
+  L←(L=⌊L)×L←(L←1↓⍳R←⌊MAX*0.5)∘.⍟(1↓⍳MAX)
+  ⍝ If a base (b) is a power of another base (a) then the powers of b can be
+  ⍝ expressed as products of the power of a.
+  ⍝   Ex: 4^2, 4^3, ..., 4^n → 2^(2×2), 2^(2×3), ... 2^(2×n)
+  ⍝ Then using this we can find duplicates for every a^x = (b^y)^x
+  ⍝   Ex: 2^8 = 2^(2×4) = 4^4
+  ⍝ The pattern of duplicates is the same for every base and depends only on the
+  ⍝ power it is raised to. Count this for each possible power (up to log2(MAX)).
+  M←(⍳L2←⌊2⍟MAX)∘.×1↓⍳MAX
+  N←L2⍴0
+COUNT:
+  N[L2]←⍴∪,M[⍳L2;⍳MAX-1]
+  →(0<L2←L2-1)/COUNT
+  ((MAX-1)×MAX-R)++/N[(I>0)/I←(⌈/L)×0=∨/[1]L×1<L]
+∇

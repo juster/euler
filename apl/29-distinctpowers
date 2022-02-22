@@ -1,8 +1,9 @@
 ⍝ -*- mode: gnu-apl -*-
 ∇EULER29 MAX
   ⍝ Use a matrix of logarithms to determine which base is a power of another
-  ⍝ base where 1 ≤ base ≤ sqrt(MAX).
-  L←(L=⌊L)×L←(L←1↓⍳R←⌊MAX*0.5)∘.⍟(1↓⍳MAX)
+  ⍝ base where 1 ≤ base ≤ ⌊sqrt(MAX). Find all a where a^b≤n.
+  L←L×L=⌈\[1](L=⌊L)×L←L∘.⍟L←1↓⍳R←⌊MAX*0.5
+  B←(∨/L)/1↓⍳R
   ⍝ If a base (b) is a power of another base (a) then the powers of b can be
   ⍝ expressed as products of the power of a.
   ⍝   Ex: 4^2, 4^3, ..., 4^n → 2^(2×2), 2^(2×3), ... 2^(2×n)
@@ -13,7 +14,8 @@
   M←(⍳L2←⌊2⍟MAX)∘.×1↓⍳MAX
   N←L2⍴0
 COUNT:
-  N[L2]←⍴∪,M[⍳L2;⍳MAX-1]
-  →(0<L2←L2-1)/COUNT
-  ((MAX-1)×MAX-R)++/N[(I>0)/I←(⌈/L)×0=∨/[1]L×1<L]
+  N[L2]←⍴M[L2;⍳MAX-1]∩,M[⍳L2-1;⍳MAX-1]
+  →(1<L2←L2-1)/COUNT
+  N←+\N
+  ((MAX-1)×(MAX-1))-+/N[⌊B⍟MAX]
 ∇

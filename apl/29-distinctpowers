@@ -14,8 +14,7 @@
   M←(⍳L2←⌊2⍟MAX)∘.×1↓⍳MAX
   N←L2⍴0
 COUNT:
-  N[L2]←⍴M[L2;⍳MAX-1]∩,M[⍳L2-1;⍳MAX-1]
-  →(1<L2←L2-1)/COUNT
-  N←+\N
-  ((MAX-1)×(MAX-1))-+/N[⌊B⍟MAX]
+  N[L2]←+/(⍳⍴P)≠P⍳P←,M[⍳L2;⍳MAX-1]
+  →(0<L2←L2-1)/COUNT
+  ((MAX-1)*2)-+/N[⌊B⍟MAX]
 ∇

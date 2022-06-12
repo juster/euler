@@ -12,16 +12,19 @@ pub fn main() void {
         mat[0][i] = 1;
     }
 
-    for (coins[1..coins.len]) |c,j| {
-        // j starts at 0
-        mat[j+1][0] = 1;
-        i = 1;
-        while (i <= n) : (i += 1) {
-            mat[j+1][i] = mat[j][i];
-            if (c <= i) {
-                mat[j+1][i] += mat[j+1][i-c];
+    i = 1;
+    for (coins[1..coins.len]) |c| {
+        mat[i][0] = 1;
+
+        var j: usize = 1;
+        while (j <= n) : (j += 1) {
+            mat[i][j] = mat[i-1][j];
+            if (c <= j) {
+                mat[i][j] += mat[i][j-c];
             }
         }
+
+        i += 1;
     }
     print("Problem 31 answer: {}\n", .{count[count.len-1]});
 }

@@ -1,20 +1,11 @@
-const std = @import("std");
-const print = std.debug.print;
-const Allocator = std.mem.Allocator;
-
+const print = @import("std").debug.print;
 const coins = [_]u64{1,2,5,10,20,50,100,200};
+const n     = 200;
 
-fn dp31(n: u64) !u64 {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
-    var alloc = arena.allocator();
+var count: [n+1]u64 = .{1} ++ .{0}**n;
 
-    var count = try alloc.alloc(u64, n+1);
+pub fn main() void {
     var i: u64 = 1;
-    while (i <= n) : (i += 1) {
-        count[i] = 0;
-    }
-    count[0] = 1;
 
     for (coins) |c| {
         i = 1;
@@ -24,10 +15,5 @@ fn dp31(n: u64) !u64 {
             }
         }
     }
-
-    return count[n];
-}
-
-pub fn main() void {
-    print("Problem 31 answer: {}\n", .{dp31(1000)});
+    print("Problem 31 answer: {}\n", .{count[n]});
 }

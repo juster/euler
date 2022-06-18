@@ -19,9 +19,9 @@ pub fn main() !void {
 
     var iter = found.iterator();
     var sum: u64 = 0;
-    print("\n", .{});
+    // print("\n", .{});
     while (iter.next()) |entry| {
-        print("{}\n", .{entry.key_ptr.*});
+        // print("{}\n", .{entry.key_ptr.*});
         sum += entry.key_ptr.*;
     }
     print("Sum {}\n", .{sum});
@@ -87,9 +87,11 @@ fn beta(found: *std.AutoHashMap(u64, void)) !void {
         print("{} {} {}\n", .{i, r[0], r[1]});
         while(j <= r[1]) : (j += 1) {
             // print("{}\n", .{floor(2*flog10(i) + 2*flog10(j))});
-            if(floor(2*flog10(i) + 2*flog10(j)) != 8.0)
-                continue;
             var x = i*j;
+            if(floor(2*flog10(i) + 2*flog10(j)) != 8.0) {
+                print("*DBG* {}\n", .{x});
+                continue;
+            }
             // print("DBG {}\n", .{x});
             if(digsum(i) + digsum(j) + digsum(x) != 45)
                 continue;

@@ -3,71 +3,59 @@ package main
 import (
 	"strconv"
 	"strings"
+	"math"
 	"fmt"
 )
 
-const limit = int(999999999 / 2)
-
 var max = 0
 
+const digitCount = 9
+
 func main() {
-	//buf := make([]byte, 0, 9)
-	n := 0
-	defer func() {
-		fmt.Printf("%d pandigitals found\n", n)
-	}()
-	for x := int(1e9 - 1); x > int(9 * 1e8); x-- {
-		s := strconv.Itoa(x)
+	candidates := make(chan string)
+	pans := make(chan string)
+	go generate(candidates)
+	go filter(candidates, pans)
+	fmt.Println(<-pans)
+}
+
+func generate(ch chan<- string) {
+	for i := float64(digitCount); i >= 0; i-- {
+		min := 9 * int(math.Pow(10, i))
+		max := 10 * int(math.Pow(10, i))
+		var buf string
+		for j := max - 1; j >= min; j-- {
+			buf = strconv.Itoa(j)
+			if len(buf) >= 9 {
+				break
+			}
+			for k := 2; k <= 9 && len(buf) < 9; k++ {
+				buf += strconv.Itoa(j * k)
+			}
+			if len(buf) == 9 {
+				ch <-buf
+			}
+		}
+	}
+	close(ch)
+}
+
+func filter(src <-chan string, dst chan<- string) {
+	FilterLoop:
+	for s := range src {
 		if strings.Contains(s, "0") {
-			continue
+			continue FilterLoop
 		}
-		if !isPandigital(s) {
-			continue
-		}
-		n++
-		if checkProducts([]byte(s)) {
-			return
-		}
-	}
-}
-
-func isPandigital(s string) bool {
-	if len(s) != 9 {
-		return false
-	}
-	seen := make(map[rune]bool)
-	for _, b := range s {
-		if seen[b] {
-			return false
-		}
-		seen[b] = true
-	}
-	return (len(seen) == 9)
-}
-
-func checkProducts(digits []byte) bool {
-	InitLoop:
-	for i := 1; i < len(digits); i++ {
-		x, err := strconv.Atoi(string(digits[0:i]))
-		if err != nil {
-			panic(err)
-		}
-		rest := digits[i:]
-		var j int
-		for j = 2; len(rest) > 0; j++ {
-			first := []byte(strconv.Itoa(x * j))
-			if len(first) > len(rest) {
-				continue InitLoop
+		seen := make(map[rune]bool)
+		for _, b := range s {
+			if seen[b] {
+				continue FilterLoop
 			}
-			for k, d := range first {
-				if rest[k] != d {
-					continue InitLoop
-				}
-			}
-			rest = rest[len(first):]
+			seen[b] = true
 		}
-		fmt.Printf("%d x (1...%d) = %s\n", x, j-1, digits)
-		return true
+		if len(seen) == 9 {
+			dst <-s
+		}
 	}
-	return false
+	close(dst)
 }

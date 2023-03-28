@@ -1,40 +1,73 @@
 package main
 
-import "fmt"
+import (
+	"strconv"
+	"strings"
+	"fmt"
+)
 
-const limit = 9
+const limit = int(999999999 / 2)
 
 var max = 0
 
 func main() {
-	buf := make([]byte, 0, 9)
-	for i := 2; i <= limit; i++ {
-		for j := 1; j <= 9; j++ {
-			prod := fmt.Sprintf("%d", i * j)
-			if len(buf) + len(prod) > 9 {
-				continue
-			}
-			buf = append(buf, []byte(prod)...)
-			if len(buf) == 9 && isPandigital(buf) {
-				var x int
-				if fmt.Sscanf(string(buf), "%d", &x); x > max {
-					max = x
-				}
-				fmt.Printf("%d x (1, %d) = %s\n", i, j, buf)
-			}
+	//buf := make([]byte, 0, 9)
+	n := 0
+	defer func() {
+		fmt.Printf("%d pandigitals found\n", n)
+	}()
+	for x := int(1e9 - 1); x > int(9 * 1e8); x-- {
+		s := strconv.Itoa(x)
+		if strings.Contains(s, "0") {
+			continue
 		}
-		buf = buf[0:0]
+		if !isPandigital(s) {
+			continue
+		}
+		n++
+		if checkProducts([]byte(s)) {
+			return
+		}
 	}
-	fmt.Printf("Results: %d\n", max)
 }
 
-func isPandigital(slice []byte) bool {
-	set := make(map[int]bool)
-	for b := range slice {
-		if _, ok := set[b]; ok {
+func isPandigital(s string) bool {
+	if len(s) != 9 {
+		return false
+	}
+	seen := make(map[rune]bool)
+	for _, b := range s {
+		if seen[b] {
 			return false
 		}
-		set[b] = true
+		seen[b] = true
 	}
-	return (len(set) == 9)
+	return (len(seen) == 9)
+}
+
+func checkProducts(digits []byte) bool {
+	InitLoop:
+	for i := 1; i < len(digits); i++ {
+		x, err := strconv.Atoi(string(digits[0:i]))
+		if err != nil {
+			panic(err)
+		}
+		rest := digits[i:]
+		var j int
+		for j = 2; len(rest) > 0; j++ {
+			first := []byte(strconv.Itoa(x * j))
+			if len(first) > len(rest) {
+				continue InitLoop
+			}
+			for k, d := range first {
+				if rest[k] != d {
+					continue InitLoop
+				}
+			}
+			rest = rest[len(first):]
+		}
+		fmt.Printf("%d x (1...%d) = %s\n", x, j-1, digits)
+		return true
+	}
+	return false
 }

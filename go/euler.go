@@ -39,9 +39,25 @@ func (sieve Sieve) isPrime(x int) bool {
 	return sieve[i]
 }
 
+func (sieve Sieve) genPrimes(min int) <-chan int {
+	out := make(chan int)
+	go func(){
+		if min <= 2 {
+			out <- 2
+		}
+		for i := min / 2; i < len(sieve); i++ {
+			if sieve[i] {
+				out <- 2 * i + 1
+			}
+		}
+		close(out)
+	}()
+	return out
+}
+
 func eratosthenes(max int) Sieve {
 	c := max / 2
-	sieve := make([]bool, c)
+	sieve := make([]bool, c + 1)
 	sieve[0] = false // 1 is not prime
 	for i := 1; i < c; i++ {
 		sieve[i] = true

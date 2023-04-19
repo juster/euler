@@ -40,21 +40,21 @@ func ff(n int, ch chan int) {
 
 func genTri(out chan int) {
 	x := 1
-	y := 1
+	y := 0
 	for {
 		out <-x
 		y += 1
-		x += y
+		x += y + 1
 	}
 }
 
 func genPenta(out chan int) {
 	x := 1
-	y := 3
+	y := 0
 	for {
 		out <-x
 		y += 3
-		x += y - 2
+		x += y + 1
 	}
 }
 

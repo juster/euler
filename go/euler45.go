@@ -5,65 +5,34 @@ import (
 )
 
 func main() {
-	triCh, pentaCh, hexCh := make(chan int), make(chan int), make(chan int)
-	go genTri(triCh)
-	go genPenta(pentaCh)
-	go genHexa(hexCh)
-	ff(285, triCh)
-	ff(165, pentaCh)
-	ff(143, hexCh)
-	x, y, z := <-triCh, <-pentaCh, <-hexCh
+	ch3, ch5, ch6 := gen(3, 285), gen(5, 165), gen(6, 143)
+	x, y, z := <-ch3, <-ch5, <-ch6
 
 	for {
-		if x < y {
-			x = <-triCh
-			continue
-		}
-		if y < z {
-			y = <-pentaCh
-			continue
-		}
-		if z < y {
-			z = <-hexCh
-			continue
+		switch {
+		case x < y: x = <-ch3; continue
+		case y < z: y = <-ch5; continue
+		case z < y: z = <-ch6; continue
 		}
 		fmt.Println("Results:", x, y, z)
 		break
 	}
 }
 
-func ff(n int, ch chan int) {
-	for i := 0; i < n; i++ {
-		<-ch
-	}
-}
+func gen(shape, ff int) chan int {
+	out := make(chan int)
+	shape -= 2
+	go func(x, y int){
+		for {
+			out <-x
+			y += shape
+			x += y + 1
+		}
+	}(1, 0)
 
-func genTri(out chan int) {
-	x := 1
-	y := 0
-	for {
-		out <-x
-		y += 1
-		x += y + 1
+	// fast-forward a certain amount
+	for i := 0; i < ff; i++ {
+		_ = <-out
 	}
-}
-
-func genPenta(out chan int) {
-	x := 1
-	y := 0
-	for {
-		out <-x
-		y += 3
-		x += y + 1
-	}
-}
-
-func genHexa(out chan int) {
-	x := 1
-	y := 0
-	for {
-		out <-x
-		y += 4
-		x += y + 1
-	}
+	return out
 }

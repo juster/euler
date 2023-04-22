@@ -5,23 +5,17 @@ var primes = eratosthenes(limit).primes()
 func main() {
 	var y, n int
 	for _, i := range primes {
-		for j := 0; j + n - 1 < len(primes); j++ {
-			if primes[j] > i {
+		var x, m int
+		for _, j := range primes {
+			m++
+			x += j
+			if x == i && m > n {
+				y = x
+				n = m
 				break
 			}
-			var x, m int
-			for k := j; k < len(primes); k++ {
-				p := primes[k]
-				m++
-				x += p
-				if x == i && m > n {
-					y = x
-					n = m
-					break
-				}
-				if x >= i {
-					break
-				}
+			if x >= i {
+				break
 			}
 		}
 	}

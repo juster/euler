@@ -14,11 +14,8 @@ func main() {
 		x, max := i, int(math.Sqrt(float64(i)))
 		// No need for primality checks or sieves.
 		// -Barker on the problem forum
-		for j := 2; j <= max; j++ {
-			switch {
-			case x < j:
-				break
-			case x%j == 0:
+		for j := 2; j <= x && j <= max; j++ {
+			if x%j == 0 {
 				m++
 				x /= j
 				for x%j == 0 {

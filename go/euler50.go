@@ -5,7 +5,7 @@ import "fmt"
 const limit = 1_000_000
 
 var sieve = eratosthenes(limit)
-var sum = []int{0} // allows us a no-op for pivoting
+var sum = []int{0} // allows us a no-op for skipping
 
 func main() {
 	x := sum[0]
@@ -17,24 +17,21 @@ func main() {
 		sum = append(sum, x)
 	}
 
-	// Loop through the sums, pivoting around j. We subtract i primes from
-	// the beginning and add k primes to the end. Sum for the k succeeding
-	// primes is sum[k] - sum[j].
+	// Subtract i primes from the beginning of sum[j] to see if that makes
+	// the sum prime. Keep the longest sequence.
 
-	var n, a, b int
+	n, a, b := 1, 0, 0
 	for i := 0; i < len(sum); i++ {
-		for j := i; j < len(sum); j++ {
-		LoopK:
-			for k := j; k < len(sum); k++ {
-				x := sum[j] - sum[i] + (sum[k] - sum[j])
-				switch {
-				case x > limit:
-					break LoopK
-				case !sieve.isPrime(x):
-					continue
-				case k-i > b-a:
-					n, a, b = x, i, k
-				}
+	LoopJ:
+		for j := i+n; j < len(sum); j++ {
+			x := sum[j] - sum[i]
+			switch {
+			case x > limit:
+				break LoopJ
+			case !sieve.isPrime(x):
+				continue
+			case j-i > b-a:
+				n, a, b = x, i, j
 			}
 		}
 	}

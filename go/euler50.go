@@ -22,12 +22,9 @@ func main() {
 
 	n, a, b := 1, 0, 0
 	for i := 0; i < len(sum); i++ {
-	LoopJ:
-		for j := i+n; j < len(sum); j++ {
+		for j := i + n; j < len(sum); j++ {
 			x := sum[j] - sum[i]
 			switch {
-			case x > limit:
-				break LoopJ
 			case !sieve.isPrime(x):
 				continue
 			case j-i > b-a:

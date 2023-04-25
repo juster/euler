@@ -1,15 +1,16 @@
 package main
 
 import "fmt"
+import "github.com/juster/euler/go/euler"
 
 const limit = 1_000_000
 
-var sieve = eratosthenes(limit)
+var sieve = euler.Eratosthenes(limit)
 var sum = []int{0} // allows us a no-op for skipping
 
 func main() {
 	x := sum[0]
-	for i := range sieve.genPrimes(1) {
+	for i := range sieve.GenPrimes() {
 		x += i
 		if x > limit {
 			break
@@ -25,7 +26,7 @@ func main() {
 		for j := i + n; j < len(sum); j++ {
 			x := sum[j] - sum[i]
 			switch {
-			case !sieve.isPrime(x):
+			case !sieve.IsPrime(x):
 				continue
 			case j-i > b-a:
 				n, a, b = x, i, j

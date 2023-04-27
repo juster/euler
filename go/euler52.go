@@ -3,15 +3,9 @@ import ("github.com/juster/euler/go/euler"; "fmt")
 const limit = 6
 
 func main() {
-	//seen := make(map[int]bool)
 Loop:
-	for a := 20; ; a++ {
+	for a := 1; ; a++ {
 		n := euler.DigitCount(a)
-		for _, x := range n {
-			if x > 1 {
-				continue Loop
-			}
-		}
 		var b int
 		for c := 1; c <= limit; c++ {
 			b += a
@@ -23,7 +17,7 @@ Loop:
 			}
 		}
 		var x int
-		for i := 1; i <= 6; i++ {
+		for i := 1; i <= limit; i++ {
 			x += a
 			fmt.Println(x)
 		}

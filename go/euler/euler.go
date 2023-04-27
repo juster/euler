@@ -22,3 +22,11 @@ func IsPrime(x int) bool {
 	}
 	return true
 }
+
+func DigitCount(n int) [10]int {
+	var seen [10]int
+	for ; n > 0; n /= 10 {
+		seen[n % 10]++
+	}
+	return seen
+}

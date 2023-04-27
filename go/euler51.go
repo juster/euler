@@ -24,47 +24,51 @@ func init() {
 }
 
 func main() {
-	for repl := range perms(blank_count, digits[:]) {
-		seen := make(map[string]int)
-		group := make(map[string]int)
-
-	PrimeLoop:
-		for p := range sieve.GenPrimesFrom(min) {
-			a := strconv.Itoa(p)
-			b := strings.Builder{}
-			var k byte
-			var j int
-			for i := 0; i < blank_count && j < len(a); j++ {
-				switch {
-				case repl[i] != j:
-					b.WriteByte(a[j])
-					continue
-				case k == 0:
-					k = a[j]
-				case k != a[j]:
-					continue PrimeLoop
-				}
-				i++
-				b.WriteByte('*')
-				continue
+	seen := make(map[string]int)
+	first := make(map[string]int)
+	for p := range sieve.GenPrimesFrom(min) {
+	MaskLoop:
+		for masked := range perms(blank_count, digits[:]) {
+			s := mask(p, masked)
+			if s == "" {
+				continue MaskLoop
 			}
-			if j < len(a) {
-				b.WriteString(a[j:])
-			}
-			s := b.String()
 			seen[s] += 1
-			if _, ok := group[s]; !ok {
-				group[s] = p
-			}
-		}
-
-		for m, n := range seen {
-			if n == group_size {
-				fmt.Printf("%s: %d\n", m, group[m])
-				return
+			if _, ok := first[s]; !ok {
+				first[s] = p
 			}
 		}
 	}
+	for m, n := range seen {
+		if n == group_size {
+			fmt.Printf("%s: %d\n", m, first[m])
+		}
+	}
+}
+
+func mask(n int, masked []int) string {
+	a := strconv.Itoa(n)
+	b := strings.Builder{}
+	var k byte
+	var j int
+	for i := 0; i < len(masked) && j < len(a); j++ {
+		switch {
+		case masked[i] != j:
+			b.WriteByte(a[j])
+			continue
+		case k == 0:
+			k = a[j]
+		case k != a[j]:
+			return ""
+		}
+		i++
+		b.WriteByte('*')
+		continue
+	}
+	if j < len(a) {
+		b.WriteString(a[j:])
+	}
+	return b.String()
 }
 
 // like Knuth's TAOCP with length limit added

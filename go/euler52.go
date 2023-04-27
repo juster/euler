@@ -13,7 +13,7 @@ Loop:
 			}
 		}
 		var b int
-		for c := 2; c < limit; c++ {
+		for c := 1; c <= limit; c++ {
 			b += a
 			m := euler.DigitCount(b)
 			for i, d := range m {

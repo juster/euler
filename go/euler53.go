@@ -1,21 +1,19 @@
 package main
-import (
-	"math/big"
-	"fmt"
-)
-const limit = 100
-var ratLimit = big.NewRat(1_000_000, 1)
+import "fmt"
+const limit_in = 100
+const limit_out = 1_000_000
 
 func main() {
 	var c int
-	for r := int64(1); r < limit; r++ {
-		f := big.NewRat(1, 1)
-		var x int64
-		for n := r+1; n <= limit; n++ {
+	for r := 1; r < limit_in; r++ {
+		var x, y int = 0, 1
+		for n := r+1; n <= limit_in; n++ {
 			x++
-			f.Mul(f, big.NewRat(n, x))
-			if f.Cmp(ratLimit) > 0 {
-				c++
+			y *= n
+			y /= x
+			if y > limit_out {
+				c += limit_in - n + 1
+				break
 			}
 		}
 	}

@@ -6,9 +6,8 @@ import (
 )
 
 const (
-	input_digits = 4
-	recurse_max  = 50
-	loop_max     = 10000
+	recurse_max = 50
+	loop_max    = 10000
 )
 
 var (

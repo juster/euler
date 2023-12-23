@@ -8,67 +8,97 @@ import (
 
 const (
 	recurse_max = 50
-	loop_max    = 10000
+	loop_max    = 9999
 )
+
+// The lychrael check starting at x, y results in z after n iterations.
+
+type step struct {
+	x, y big.Int
+	n int
+}
+
+type result struct {
+	z big.Int
+	n int
+}
 
 var (
 	count, top int
-	stack      [2 * recurse_max]big.Int
-	cache      map[string]bool
+	stack      [recurse_max]step
+	// *result is nil if the lychrael check results in a palindrome at some point
+	cache      map[string]*result
 )
 
 func init() {
-	cache = make(map[string]bool)
+	cache = make(map[string]*result)
 }
 
-func push(x, y *big.Int) {
-	stack[top+0] = *x
-	stack[top+1] = *y
-	top += 2
+func push(n int, x, y *big.Int) {
+	dest := &stack[top]
+	dest.x.Set(x)
+	dest.y.Set(y)
+	dest.n = n
+	top++
 }
 
-// Cache whether a palindrome was found.
-func store(found bool) {
-	if found {
-		for _, x := range stack[:top] {
-			cache[x.String()] = true
+// Cache the last result of the Lychrael check operation. If end is nil then a palindrome was found.
+
+func reset(end *big.Int) {
+	// top is the number of operations.
+	for i := 0; i < top; i++ {
+		step := &stack[i]
+		var r *result
+		if end != nil {
+			r = &result{n: step.n - i + 1}
+			r.z.Set(end)
+			//fmt.Printf("*DBG* store: %s + %s == %s, %d\n", &step.x, &step.y, end, r.n)
 		}
-	} else {
-		count++
+		cache[step.x.String()] = r
+		cache[step.y.String()] = r
 	}
 	top = 0
 }
 
 func main() {
+	n := 0
 	start := time.Now()
-	for i := int64(1); i < loop_max; i++ {
-		var pal bool
+	for i := int64(1); i <= loop_max; i++ {
 		x := big.NewInt(i)
 	Loop:
-		for j := 0; j < recurse_max; j++ {
+		for j := 1; j <= recurse_max; j++ {
 			s := x.String()
-			if pal = cache[s]; pal && top > 0 {
-				// Don't stop if the operands are palindromes. The sum must be a palindrome
-				// to reject it as a Lychrael number.
-				break Loop
-			}
-			var y *big.Int
-			y, pal = reverse(x)
-			push(x, y)
-			if pal {
-				if top > 2 {
-					//fmt.Println("*DBG* palindrome:", i, j, y)
+			if ff, ok := cache[s]; ok {
+				n++
+				switch {
+				case ff == nil && j > 1:
+					// Previously, a palindrome was found eventually.
+					x = nil
 					break Loop
+				case ff != nil:
+					// Fast-forward to the last result that was not a palindrome.
+					//fmt.Printf("*DBG* j=%d x=%s\n*DBG* n=%d z=%s\n", j, x, ff.n, &ff.z)
+					x.Set(&ff.z)
+					j += ff.n - 1 // j gets incremented *and* don't count this iteration
+					continue Loop
 				}
 			}
+			y, pal := reverse(x)
+			if pal && j > 1 {
+				//fmt.Println("*DBG* palindrome:", i, j, y)
+				x = nil
+				break Loop
+			}
+			push(j, x, y)
 			x = x.Add(x, y)
 		}
-		if !pal {
+		reset(x)
+		if x != nil {
 			fmt.Println("Found", i)
+			count++
 		}
-		store(pal)
 	}
-	fmt.Println("Answer", count, len(cache), time.Now().Sub(start))
+	fmt.Println("Answer", count, n, len(cache), time.Now().Sub(start))
 }
 
 func reverse(x *big.Int) (*big.Int, bool) {
@@ -76,17 +106,18 @@ func reverse(x *big.Int) (*big.Int, bool) {
 	buf := make([]byte, len(s))
 	pal := true
 
-	for i := 0; i < len(s)/2; i++ {
-		j := len(s) - i - 1
+	i, j, m := 0, len(s) - 1, len(s)/2
+	for i < m {
 		if s[i] != s[j] {
 			pal = false
 		}
 		buf[j] = s[i]
 		buf[i] = s[j]
+		i++
+		j--
 	}
 	if len(s)%2 == 1 {
-		j := len(s) / 2
-		buf[j] = s[j]
+		buf[m] = s[m]
 	}
 
 	y := &big.Int{}

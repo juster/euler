@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/big"
+	"time"
 )
 
 const (
@@ -39,6 +40,7 @@ func store(found bool) {
 }
 
 func main() {
+	start := time.Now()
 	for i := int64(1); i < loop_max; i++ {
 		var pal bool
 		x := big.NewInt(i)
@@ -66,7 +68,7 @@ func main() {
 		}
 		store(pal)
 	}
-	fmt.Println("Answer", count, len(cache))
+	fmt.Println("Answer", count, len(cache), time.Now().Sub(start))
 }
 
 func reverse(x *big.Int) (*big.Int, bool) {

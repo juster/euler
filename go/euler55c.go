@@ -6,48 +6,48 @@ import (
 	"time"
 )
 
+const (
+	search_limit = 10_000
+	recurse_max  = 50
+)
+
+var (
+	skip [search_limit + 1]bool
+)
+
 func main() {
 	var count int
+	var x, y *big.Int
+	y = &big.Int{}
 	start := time.Now()
 Loop:
-	for i := int64(1); i <= 10_000; i++ {
-		x := big.NewInt(i)
-		y := &big.Int{}
-		reverse(x, y)
-		for j := 1; j <= 50; j++ {
+	for i := int64(1); i <= search_limit; i++ {
+		x = big.NewInt(i)
+		if skip[i] {
+			continue Loop
+		}
+		reverseIsPal(x, y)
+		rev := y.Int64()
+		for j := 1; j <= recurse_max; j++ {
 			x.Add(x, y)
-			is_pal := reverse(x, y)
-			if is_pal {
+			if reverseIsPal(x, y) {
+				skip[rev] = true
 				continue Loop
 			}
 		}
 		count++
 	}
-	fmt.Println("Answer:", count, time.Now().Sub(start))
+	fmt.Println("Answer:", count, "in", time.Now().Sub(start))
 }
 
-func reverse(x, y *big.Int) bool {
-	s := x.String()
-	buf := make([]byte, len(s))
-	pal := true
-
-	i, j, m := 0, len(s)-1, len(s)/2
-	for i = 0; i < m; i++ {
-		if pal && s[i] != s[j] {
-			pal = false
-		}
-		buf[j] = s[i]
-		buf[i] = s[j]
-		j--
+func reverseIsPal(src, dst *big.Int) bool {
+	s := src.String()
+	n := len(s)
+	buf := make([]byte, n)
+	for i := 0; i < n; i++ {
+		buf[n-i-1] = s[i]
 	}
-	if len(s)%2 == 1 {
-		buf[m] = s[m]
-	}
-
-	_, ok := y.SetString(string(buf), 10)
-	if !ok {
-		panic("internal error: " + string(buf))
-	}
-
-	return pal
+	t := string(buf)
+	dst.SetString(t, 10)
+	return s == t
 }

@@ -10,21 +10,21 @@ import (
 
 func BenchmarkEuler(b *testing.B) {
 	var count int
-	var num, denom, tmp, big2 *big.Int
-	num, big2 = big.NewInt(1), big.NewInt(2)
-	denom, tmp = &big.Int{}, &big.Int{}
-	denom.Set(big2)
+	var rat, big1, big2 big.Rat
+	var tmp big.Int
+
+	rat.Set(big.NewRat(2, 1))
+	big2.Set(&rat)
+	big1.Set(big.NewRat(1, 1))
+
 	for i := 0; i < b.N; i++ {
-		// tmp is 1 + num/denom
-		tmp.Add(tmp.Set(num), denom)
+		rat.Inv(&rat)
+		tmp.Add(tmp.Set(rat.Num()), rat.Denom())
 		//fmt.Println("*DBG*", i, tmp, denom)
-		if len(tmp.String()) > len(denom.String()) {
+		if len(tmp.String()) > len(rat.Denom().String()) {
 			count++
 		}
-
-		tmp.Mul(big2, tmp.Set(denom))
-		num.Add(num, tmp)
-		num, denom = denom, num
+		rat.Add(&rat, &big2)
 	}
 	fmt.Println("Answer:", count)
 }

@@ -25,11 +25,10 @@ func main() {
 	fmt.Printf("Answer: %d in %s\n", max, time.Now().Sub(start))
 }
 
-func digitalSum(x *big.Int) int {
-	var sum int
+func digitalSum(x *big.Int) (sum int) {
 	s := x.String()
 	for i := 0; i < len(s); i++ {
 		sum += int(s[i]) - '0'
 	}
-	return sum
+	return
 }

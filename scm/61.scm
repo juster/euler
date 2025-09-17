@@ -1,0 +1,40 @@
+(import (only srfi-1 first last delete))
+
+(define (figurate s n)
+  (quotient (+ (* (- s 2) n n)
+	       (* (- 4 s) n))
+	    2))
+
+(define *sets*
+   (map (lambda (s)
+	  (let loop ((n 1) (acc '()))
+	    (let ((x (figurate s n)))
+	      (cond ((< x 1000) (loop (+ n 1) acc))
+		    ((> x 9999) acc)
+		    (else (loop (+ n 1) (cons x acc)))))))
+	'(3 4 5 6 7 8)))
+
+(define (cycle-edge? x y)
+  (equal? (substring (number->string x) 2 4)
+	  (substring (number->string y) 0 2)))
+
+(define (search sets)
+  (define (search-set s found return sets)
+    (for-each (lambda (n)
+		(if (or (null? found) (cycle-edge? n (car found)))
+		    (search-any-set (cons n found) return sets)))
+	      s))
+  (define (search-any-set found return sets)
+    (if (null? sets)
+	(if (cycle-edge? (last found) (first found))
+	    (return found))
+	(for-each (lambda (s)
+		    (search-set s found return
+				(delete s sets eqv?)))
+		  sets)))
+  (call/cc (lambda (cont)
+	     (search-any-set '() cont sets)
+	     '())))
+
+(let ((solution (search *sets*)))
+  (print solution " " (foldl + 0 solution)))

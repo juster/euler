@@ -1,0 +1,33 @@
+(define LIMIT 1500000)
+
+(define (make-array size init)
+  (let loop ((i 0) (v '()))
+    (if (= i size)
+        (list->vector (reverse v))
+        (loop (+ i 1) (cons init v)))))
+
+(define (count-single-triangles limit)
+  (let ((counts (make-array (+ 1 limit) 0)))
+    (let loop-m ((m 2))
+      (when (< (* 2 m m) limit)
+        (let loop-n ((n (if (even? m) 1 2)))
+          (when (< n m)
+            (when (= (gcd m n) 1)
+              (let ((p0 (* 2 m (+ m n))))
+                (let loop-k ((k 1) (p p0))
+                  (when (<= p limit)
+                    (vector-set! counts p (+ 1 (vector-ref counts p)))
+                    (loop-k (+ k 1) (* p0 (+ k 1)))))))
+            (loop-n (+ n 2))))
+        (loop-m (+ m 1))))
+    ;; Count perimeters with exactly one triangle
+    (let loop ((i 0) (count 0))
+      (if (> i limit)
+          count
+          (loop (+ i 1)
+                (if (= (vector-ref counts i) 1)
+                    (+ count 1)
+                    count))))))
+
+(display (count-single-triangles LIMIT))
+(newline)

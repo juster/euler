@@ -1,0 +1,47 @@
+;; Chicken Scheme 5
+(import (only miscmacros inc!))
+(define *max* 10000000)
+(define *table* (make-vector (+ *max* 1) 0))
+
+(define (fill-totients)
+  (do ((i 1 (+ i 1)))
+      ((> i *max*))
+    (set! (vector-ref *table* i) i))
+  (do ((p 2 (+ p 1)))
+      ((> p *max*))
+    ;; find all prime factors
+    (when (= (vector-ref *table* p) p)
+      ;; untouched entries are prime, have totient = p-1
+      (set! (vector-ref *table* p) (- p 1))
+      (do ((i (+ p p) (+ i p)))
+		  ((> i *max*))
+		;; for each prime factor p, multiply product (which starts at v[n]=n) by (1 - 1/p)
+		(let ((x (vector-ref *table* i)))
+		  (set! (vector-ref *table* i) (* x (- 1 (/ 1 p)))))))))
+
+(define (digit-frequency str)
+  (let ((v (make-vector 10 0)))
+    (do ((i 0 (+ i 1)))
+		((= i (string-length str)) v)
+	  (inc! (vector-ref v (- (char->integer (string-ref str i)) 48))))))
+
+(define (permutation? x y)
+  (let ((a (number->string x))
+		(b (number->string y)))
+    (and (= (string-length a) (string-length b))
+		 (equal? (digit-frequency a) (digit-frequency b)))))
+
+(define (print-min)
+  (let ((min-ratio *max*) (min-n 0))
+	(do ((n 2 (+ n 1)))
+		((> n *max*) (print min-n))
+	  (let ((totient (vector-ref *table* n)))
+		(when (= n 87109) (print `(*DBG* ,n ,totient)))
+		(when (permutation? n totient)
+		  (let ((ratio (/ n totient)))
+			(when (< ratio min-ratio)
+			  (set! min-ratio ratio)
+			  (set! min-n n))))))))
+
+(fill-totients)
+(print-min)

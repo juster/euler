@@ -1,0 +1,76 @@
+(define primes (sieve 10000))
+
+(define (prime? n)
+  (cond ((= n 1) #f)
+        ((= n 2) #t)
+        ((= 0 (remainder n 2)) #f)
+        (else 
+	 (let loop ((i 3))
+	   (cond ((>= (* i i) n) #t)
+		 ((= n (* i (quotient n i))) #f)
+		 (else (loop (+ 2 i))))))))
+
+(define (sieve-mask->vector mask)
+  (let loop ((i 0) (acc '()))
+    (if (>= i (vector-length mask))
+	(list->vector (reverse acc))
+	(loop (+ 1 i) (if (vector-ref mask i) (cons (+ 1 i) acc) acc)))))
+
+;; Sieve of Eratosthenes stored as boolean vector
+(define (sieve max)
+  (let ((mask (make-vector max #t)))
+    (vector-set! mask 0 #f)
+    (do ((i 1 (+ 1 i)))
+	((>= i max) (sieve-mask->vector mask))
+      (if (vector-ref mask i)
+	  (do ((j (+ i i 1) (+ j i 1)))
+	      ((>= j max))
+	    (vector-set! mask j #f))))))
+
+(define prime-count (vector-length primes))
+
+(display `(found ,prime-count primes))
+(newline)
+
+(define pair-matrix (make-vector (* prime-count prime-count) #f))
+(define (matrix-ref i j) (vector-ref pair-matrix (+ (* i prime-count) j)))
+(define (matrix-set! i j b) (vector-set! pair-matrix (+ (* i prime-count) j) b))
+
+(define (prime-concat? x y)
+  (prime? (string->number (string-append (number->string x)
+					 (number->string y)))))
+
+(define (populate-pairs)
+  (do ((i 0 (+ 1 i)))
+      ((>= i prime-count))
+    (do ((j (+ 1 i) (+ 1 j)))
+	((>= j prime-count))
+      (let ((p (vector-ref primes i))
+	    (q (vector-ref primes j)))
+	(if (and (prime-concat? p q) (prime-concat? q p))
+	    (begin
+	      (matrix-set! i j #t)
+	      (matrix-set! j i #t)))))))
+
+(populate-pairs)
+
+(do ((a 0 (+ 1 a))) ((>= (+ 4 a) prime-count))
+  (do ((b (+ 1 a) (+ 1 b))) ((>= (+ 3 b) prime-count))
+    (if (matrix-ref a b)
+	(do ((c (+ 1 b) (+ 1 c))) ((>= (+ 2 c) prime-count))
+	  (if (and (matrix-ref a c)
+		   (matrix-ref b c))
+	      (do ((d (+ 1 c) (+ 1 d))) ((>= (+ 1 d) prime-count))
+		(if (and (matrix-ref a d)
+			 (matrix-ref b d)
+			 (matrix-ref c d))
+		    (do ((e (+ 1 d) (+ 1 e))) ((>= e prime-count))
+		      (if (and (matrix-ref a e)
+			       (matrix-ref b e)
+			       (matrix-ref c e)
+			       (matrix-ref d e))
+			  (begin
+			    (display (list a b c d e))
+			    (display " ")
+			    (display (+ a b c d e))
+			    (newline)))))))))))

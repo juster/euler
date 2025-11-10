@@ -1,0 +1,31 @@
+(import (chicken io) (chicken string) (chicken time) (chicken format)
+		srfi-17			; setter proc for array-ref is needed for inc!
+		srfi-25			; multi-dimensional arrays
+		miscmacros)		; inc!
+(set! (setter array-ref) array-set!)
+(define-constant *dim* 80)
+(define (load-matrix path)
+  (let ((matrix (make-array (shape 0 (+ *dim* 1) 0 (+ *dim* 1)) +inf.0)))
+	(define (load-row y)
+	  (lambda (x col)
+		(set! (array-ref matrix x y) col)
+		(+ x 1)))
+	(with-input-from-file path
+	  (lambda ()
+		(dotimes (y *dim*)
+		  (let ((n-columns (foldl (load-row y) 0 (map string->number (string-split (read-line) ",")))))
+			(assert (= *dim* n-columns) (format "row ~A has ~A columns" (+ y 1) n-columns))))
+		(assert (eof-object? (read-line)) (format "more than ~A rows found" *dim*))))
+	(set! (array-ref matrix (- *dim* 1) *dim*) 0) ; the corner has no neighbors, avoid adding to it
+	(set! (array-ref matrix *dim* (- *dim* 1)) 0)
+	matrix))
+(define (solve)
+  (let ((matrix (load-matrix "0081_matrix.txt")))
+	(do ((y (- *dim* 1) (- y 1)))
+		((< y 0) (print `(Answer: ,(inexact->exact (array-ref matrix 0 0)))))
+	  (do ((x (- *dim* 1) (- x 1)))
+		  ((< x 0))
+		(inc! (array-ref matrix x y)
+			  (min (array-ref matrix (+ x 1) y)
+				   (array-ref matrix x (+ y 1))))))))
+(time (solve))

@@ -1,0 +1,25 @@
+(import srfi-1)
+
+(define *max* 100)
+(define *digit-count* 100)
+(define (char->digit ch) (- (char->integer ch) (char->integer #\0)))
+(define (number->list n) (map char->digit ((compose string->list number->string) n)))
+(define (whole-count n) (inexact->exact (floor (+ 1 (/ (log n) (log 10))))))
+
+(define (newton n rounds)
+  (do ((i 1 (+ i 1))
+	   (x 1 (/ (+ x (/ n x)) 2)))
+	  ((> i rounds) x)))
+
+(define (digits n)
+  (let ((i-count (whole-count n)))
+	(number->list (floor (* n (expt 10 (- *digit-count* i-count)))))))
+
+(define (solve)
+  (let loop ((i 1) (sum 0))
+	(if (> i *max*)
+		(print `(Answer: ,sum))
+		(let ((root (sqrt i)))
+		  (loop (+ i 1)
+				(if (integer? root) (begin (print `(DBG skipping: ,i)) sum)
+					(foldl + sum (digits (newton i 12)))))))))
